@@ -1068,10 +1068,11 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     MATRIX_Tran(&omega_0,&Tempb,1,1);
     MATRIX_Mul(&Tempb, &Temp5,&Temp6,1,1,1); // （28）中，N（t）分母加号之后部分
     // 计算 lambda_t
-	lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
-	Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
+	// lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
+	// Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
+    lambda = 0.99;
     /*
-    //lambda = 0.99;
+    
 	if(lambda >= 1.0) {
 		lambda = 1.0;
 	}
@@ -1112,7 +1113,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     dTheta_RL_t[5] = omega_UD_dst[5];
     
     // 规划角速度与实际角速度之差
-   
+    
     Angular_Err[0] =  dTheta_U_RL_t_1[0] - dtheta1_U;
     Angular_Err[1] =  dTheta_U_RL_t_1[1] - dtheta2_U;
     Angular_Err[2] =  dTheta_U_RL_t_1[2] - dtheta3_U;
