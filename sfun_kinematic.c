@@ -18,10 +18,11 @@
  * Need to include simstruc.h for the definition of the SimStruct and
  * its associated macro definitions.
  */
-#include "simstruc.h"
 #include "mex.h"
+#include "simstruc.h"
+
 // #include "stdio.h"
-#include "stdlib.h"
+// #include "stdlib.h"
 #include "math.h"
 #define pi 3.14159265
 // 定义0矩阵， n*m
@@ -431,6 +432,12 @@ static void mdlStart(SimStruct *S)
  */
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
+    #if defined(SS_STDIO_AVAILABLE)
+	ssPrintf("my message ...");
+#endif
+    ssPrintf("Here is ssPrintf\n");
+     mexPrintf("Here is mexPrintf\n");
+    printf("Here is printf\n");
     // The properties of the bodies, including length, mass and inertia.
     // mass centre of the base
     static real_T b0_U = 0.3*1.414213526;
@@ -1060,19 +1067,19 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     MATRIX_Mul(&Q_t_1,&omega_0, &Temp5,1,1,1); // （28）中，N（t）分子
     MATRIX_Tran(&omega_0,&Tempb,1,1);
     MATRIX_Mul(&Tempb, &Temp5,&Temp6,1,1,1); // （28）中，N（t）分母加号之后部分
-     if( (t/0.005) > 1.0){
-        // 计算 lambda_t
-	    lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
-	    Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
-        //lambda = 0.99;
-	    if(lambda >= 1.0) {
-		   lambda = 1.0;
-	    }
-	   if(lambda <= 0.9) {
-		    lambda = 0.9;
-	   }
-	   printf("lambda:%f\n",lambda);
-     }
+    // 计算 lambda_t
+	lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
+	Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
+    /*
+    //lambda = 0.99;
+	if(lambda >= 1.0) {
+		lambda = 1.0;
+	}
+	if(lambda <= 0.9) {
+		lambda = 0.9;
+	}
+     **/
+	printf("lambda:%f\n",lambda);
     /////////
     MATRIX_Add(&lambda,&Temp6,&Tempb,1,1); // （28）中，N（t）分母
 	    //MATRIX_Inv(&Tempb,&Temp6,1);  // 求倒数该表达方式有问题，不能用
@@ -1105,16 +1112,16 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     dTheta_RL_t[5] = omega_UD_dst[5];
     
     // 规划角速度与实际角速度之差
+   
+    Angular_Err[0] =  dTheta_U_RL_t_1[0] - dtheta1_U;
+    Angular_Err[1] =  dTheta_U_RL_t_1[1] - dtheta2_U;
+    Angular_Err[2] =  dTheta_U_RL_t_1[2] - dtheta3_U;
+    
+    Angular_Err[3] =  dTheta_U_RL_t_1[3] - dtheta1_D;
+    Angular_Err[4] =  dTheta_U_RL_t_1[4] - dtheta2_D;
+    Angular_Err[5] =  dTheta_U_RL_t_1[5] - dtheta3_D;
+     
     /*
-    Angular_Err[0] =  omega_UD_dst[0] - dtheta1_U;
-    Angular_Err[1] =  omega_UD_dst[1] - dtheta2_U;
-    Angular_Err[2] =  omega_UD_dst[2] - dtheta3_U;
-    
-    Angular_Err[3] =  omega_UD_dst[3] - dtheta1_D;
-    Angular_Err[4] =  omega_UD_dst[4] - dtheta2_D;
-    Angular_Err[5] =  omega_UD_dst[5] - dtheta3_D;
-     **/
-    
     Angular_Err[0] =  Y_Kw0[0];
     Angular_Err[1] =  Y_Kw0[1];
     Angular_Err[2] =  Y_Kw0[2];
@@ -1122,6 +1129,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     Angular_Err[3] =  Y_Kw0[3];
     Angular_Err[4] =  Y_Kw0[4];
     Angular_Err[5] =  Y_Kw0[5];
+      ***/
     // 误差为什么要乘以0.025？  转化成角度之差！
     
     Angle_Err[0] = Angular_Err[0]*(0.025);
