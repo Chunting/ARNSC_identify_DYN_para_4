@@ -4,3 +4,5 @@
 *.mat
 
 *.autosave
+
+*.mexw64
