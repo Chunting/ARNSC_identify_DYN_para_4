@@ -48,7 +48,7 @@ C_eta = C_eta_out.Data;
 Angle_Err = rad2deg(Angle_Err_out.Data);
 Angular_Err = rad2deg(K_Err_out.Data);
 Lamda = Lamda_out.Data;
-startTime = 0;
+startTime = 0.0;
 stopTime = 20;
 %%%%%%%%%%%%%%%%%%%%%   1. ¹Ø½Ú½Ç¶È  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure(1);

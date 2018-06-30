@@ -1050,7 +1050,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
         MATRIX_Mul(H_UD_Pinv, &Temp5,Temp4,6,1,1);  // See Eq. 23-25
         MATRIX_Tran(Temp4,W_t_1,6,1);
         Q_t_1 = 1000.0;  // 为什么是500？
-        lambda = 0.999;
+        lambda = 0.99;
         printf("t:%4f\n",t);
     }
     //// 计算误差项 error, see Eq.30 
