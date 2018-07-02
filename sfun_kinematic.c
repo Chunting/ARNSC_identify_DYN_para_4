@@ -644,7 +644,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     real_T K_t_1[6];
     real_T K_t_1_inv[6];
     real_T N_t;
-    real_T lambda = 0.999;
+    real_T lambda = 0.99;
 	real_T lambda0 = 0.0001;
     real_T Y_t[6];
     real_T Temp1[6];
@@ -735,7 +735,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     real_T * Counter = ssGetOutputPortRealSignal( S, 14 );
     real_T * Iteration_out = ssGetOutputPortRealSignal( S,15 );
     real_T * C_eta_out = ssGetOutputPortRealSignal( S,16 );
-    real_T * Angle_Err_out = ssGetOutputPortRealSignal( S,17 );
+    real_T * Angular_Err_out = ssGetOutputPortRealSignal( S,17 );
     real_T * K_error_out = ssGetOutputPortRealSignal( S,18 );
 	real_T * lamda_out = ssGetOutputPortRealSignal( S,19 );
     
@@ -1005,7 +1005,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     
     MATRIX_SetZero(&omega_0, 1,1);
     MATRIX_SetZero(omega_UD_dst, 6,1);
-    // printf("dTheta_U_RL_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_U_RL_t_1[0][0],dTheta_U_RL_t_1[1][0],dTheta_U_RL_t_1[2][0],dTheta_U_RL_t_1[3][0],dTheta_U_RL_t_1[4][0],dTheta_U_RL_t_1[5][0]);
+    //printf("dTheta_U_RL_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_U_RL_t_1[0][0],dTheta_U_RL_t_1[1][0],dTheta_U_RL_t_1[2][0],dTheta_U_RL_t_1[3][0],dTheta_U_RL_t_1[4][0],dTheta_U_RL_t_1[5][0]);
     //printf("Q_t_1:%4f\n",Q_t_1[0][0]);
     //printf("W_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",W_t_1[0][0],W_t_1[0][1],W_t_1[0][2],W_t_1[0][3],W_t_1[0][4],W_t_1[0][5]);
     // 关节角速度
@@ -1068,13 +1068,13 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     MATRIX_Tran(&omega_0,&Tempb,1,1);
     MATRIX_Mul(&Tempb, &Temp5,&Temp6,1,1,1); // （28）中，N（t）分母加号之后部分
     // 计算 lambda_t
-	// lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
-	// Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
-    lambda = 0.99;
-    /*
+	lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
+	         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
+    // lambda = 0.999;
     
+    /*
 	if(lambda >= 1.0) {
-		lambda = 1.0;
+		lambda = 0.99;
 	}
 	if(lambda <= 0.9) {
 		lambda = 0.9;
@@ -1230,12 +1230,12 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     C_eta_out[3] = C_eta[3];
     C_eta_out[4] = C_eta[4];
     C_eta_out[5] = C_eta[5];
-    Angle_Err_out[0] = Angle_Err[0];
-    Angle_Err_out[1] = Angle_Err[1];
-    Angle_Err_out[2] = Angle_Err[2];
-    Angle_Err_out[3] = Angle_Err[3];
-    Angle_Err_out[4] = Angle_Err[4];
-    Angle_Err_out[5] = Angle_Err[5];
+    Angular_Err_out[0] = Angular_Err[0];
+    Angular_Err_out[1] = Angular_Err[1];
+    Angular_Err_out[2] = Angular_Err[2];
+    Angular_Err_out[3] = Angular_Err[3];
+    Angular_Err_out[4] = Angular_Err[4];
+    Angular_Err_out[5] = Angular_Err[5];
     /*
     K_error_out[0] = Y_Kw0[0];
     K_error_out[1] = Y_Kw0[1];

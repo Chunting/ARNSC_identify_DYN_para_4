@@ -45,8 +45,8 @@ JointTorque_D1_ = JointTorque_D1.Data;
 JointTorque_D2_ = JointTorque_D2.Data;
 JointTorque_D3_ = JointTorque_D3.Data;
 C_eta = C_eta_out.Data;
-Angle_Err = rad2deg(Angle_Err_out.Data);
-Angular_Err = rad2deg(K_Err_out.Data);
+Angular_Err_ = rad2deg(Angle_Err_out.Data);
+K_Err = rad2deg(K_Err_out.Data);
 Lamda = Lamda_out.Data;
 startTime = 0.0;
 stopTime = 20;
@@ -64,11 +64,11 @@ axis([startTime stopTime -inf inf]);
 hold on
 % grid on
 %xlabel('Time (s)','fontsize',12);
-ylabel('Arm-a (deg)','fontsize',12);
+ylabel('Arm-A (deg)','fontsize',12);
 hl = legend('Joint1','Joint2','Joint3','Location','northwest');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
-% title('Joints Angles of Arm-a');
+% title('Joints Angles of Arm-A');
 subplot(2,1,2)
 %figure(2);
 semilogx(t,JointPos_D1_,'-b',t,JointPos_D2_,'--r',t,JointPos_D3_,'-.m','LineWidth',2);
@@ -76,12 +76,12 @@ axis([startTime stopTime -inf inf]);
 hold on
 % grid on
 xlabel('Time (s)','fontsize',12);
-ylabel('Arm-b (deg)','fontsize',12);
+ylabel('Arm-B (deg)','fontsize',12);
 hl = legend('Joint1','Joint2','Joint3','Location','northwest');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
 savefig(figureHandle1,[dataPath '\JointPosition.fig']);
-% title('Joints Angles of Arm-b');
+% title('Joints Angles of Arm-B');
 %%%%%%%%%%%%%%%%%%%%%%%%%  2. 关节速度  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figureHandle3 = figure(3);
 subplot(2,1,1)
@@ -89,23 +89,23 @@ semilogx(t,JointVel_U1_,'-b',t,JointVel_U2_,'--r',t,JointVel_U3_,'-.m','LineWidt
 % grid on
 axis([startTime stopTime -inf inf]);
 %xlabel('Time (s)','fontsize',12);
-ylabel('Arm-a (deg/s)','fontsize',12);
+ylabel('Arm-A (deg/s)','fontsize',12);
 hl = legend('Joint1','Joint2','Joint3','Location','northwest');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
-% title(' Joint rates of Arm-a');
+% title(' Joint rates of Arm-A');
 subplot(2,1,2);
 %figure(4);
 semilogx(t,JointVel_D1_,'-b',t,JointVel_D2_,'--r',t,JointVel_D3_,'-.m','LineWidth',2);
 axis([startTime stopTime -inf inf]);
 % grid on
 xlabel('Time (s)','fontsize',12);
-ylabel('Arm-b (deg/s)','fontsize',12);
+ylabel('Arm-B (deg/s)','fontsize',12);
 hl = legend('Joint1','Joint2','Joint3','Location','northwest');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
 savefig(figureHandle3,[dataPath '\JointVelcity.fig']);
-% title(' Joint rates of Arm-b');
+% title(' Joint rates of Arm-B');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%  3. 基座扰动  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figureHandle5 = figure(5);
 subplot(2,1,1)
@@ -129,89 +129,96 @@ savefig(figureHandle5,[dataPath '\BaseDisturbance.fig']);
 figureHandle6 = figure(6);
 subplot(3,1,1)
 semilogx(t,MassTarget_,'LineWidth',2);
-axis([startTime stopTime -inf inf]);
+axis([startTime stopTime 0 250]);
 ylabel('Mass (kg)','fontsize',12);
 
 subplot(3,1,2)
 semilogx(t,CoMTarget_,'LineWidth',2);
 ylabel('Mass center (m)','fontsize',12);
-axis([startTime stopTime -inf inf]);
+axis([startTime stopTime 0 0.5]);
 
 subplot(3,1,3);
 semilogx(t,InertiaTarget_,'LineWidth',2);
-axis([startTime stopTime -inf inf]);
+axis([startTime stopTime 0 250]);
 xlabel('Time (s)','fontsize',12);
 ylabel('Inertia (kg.m^2)','fontsize',12);
-savefig(figureHandle5,[dataPath '\IdentificationResult.fig']);
+savefig(figureHandle6,[dataPath '\IdentificationResult.fig']);
 %%%%%%%%%%%%%%%%%%%%%%   5. 关节力矩     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figureHandle7 = figure(7);
-%subplot(2,1,1)
+subplot(2,1,1)
 semilogx(t,JointTorque_U1_,'-b',t,JointTorque_U2_,'--r',t,JointTorque_U3_,'-.m','LineWidth',2);
 axis([startTime stopTime -inf inf]);
 xlabel('Time (s)','fontsize',12);
-ylabel('Arm-a torque (N \cdot M)','fontsize',12);
+ylabel('Arm-A torque (N \cdot M)','fontsize',12);
 hl = legend('\tau1','\tau2','\tau3','Location','northwest');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
-savefig(figureHandle7,[dataPath '\JointTorque_U.fig']);
+%savefig(figureHandle7,[dataPath '\JointTorque_U.fig']);
 % title(' Joint Torque of arm-a');
-%subplot(2,1,2);
-figureHandle8 = figure(8);
+subplot(2,1,2);
+%figureHandle8 = figure(8);
 semilogx(t,JointTorque_D1_,'-b',t,JointTorque_D2_,'--r',t,JointTorque_D3_,'-.m','LineWidth',2);
 axis([startTime stopTime -inf inf]);
 xlabel('Time (s)','fontsize',12);
-ylabel('Arm-b torque (N \cdot M)','fontsize',12);
+ylabel('Arm-B torque (N \cdot M)','fontsize',12);
 hl = legend('\tau1','\tau2','\tau3','Location','northwest');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
-savefig(figureHandle8,[dataPath '\JointTorque_D.fig']);
+savefig(figureHandle7,[dataPath '\JointTorque_D.fig']);
 %%%%%%%%%%%%%%%%%%%%%    6. 动量守恒    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figureHandle9 = figure(9);
 l = length(t);
 semilogx(t,AngMom_SR_,'-.m',t,AngMom_Target_,'-r',t,AngMom_Sum_,'-b','LineWidth',2);
 axis([startTime stopTime -inf inf]);
-hl = legend('AngMom_SR','AngMom_Target','AngMom_Sum');
+hl = legend('AngMomSR','AngMomTarget','AngMomSum');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
 xlabel('Time (s)','fontsize',12);
 ylabel('Angular Momentum (kg·m/s)','fontsize',12);
 savefig(figureHandle9,[dataPath '\AngularMomentum.fig']);
-%%%%%%%%%%%%%%%%%%%%%%  7. 关节角速度误差  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%  7. K 误差  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figureHandle10 = figure(10);
-%subplot(2,1,1)
-semilogx(t,Angular_Err(:,1),t,Angular_Err(:,2),t,Angular_Err(:,3),'LineWidth',2);
+subplot(2,1,1)
+semilogx(t,K_Err(:,1:3),'LineWidth',2);
 axis([startTime stopTime -inf inf]);
-%set(gca,'xticklabel',startTime:2:stopTime);
 xlabel('Time (s)','fontsize',12);
-ylabel('Arm-a','fontsize',12);
-hl = legend('joint1','joint2','joint3','Location','northwest');
+ylabel('Arm-A','fontsize',12);
+hl = legend('Joint1','Joint2','Joint3','Location','northwest');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
-savefig(figureHandle10,[dataPath '\JointVel_Error_U.fig']);
-figureHandle11 = figure(11);
-%semilogx(t,CoMTarget,'LineWidth',2);
-semilogx(t,Angular_Err(:,4:6),'LineWidth',2);
+%savefig(figureHandle10,[dataPath '\JointVel_Error_U.fig']);
+%figureHandle11 = figure(11);
+subplot(2,1,2)
+semilogx(t,K_Err(:,4:6),'LineWidth',2);
 axis([startTime stopTime -inf inf]);
-axis('auto y');
-%set(gca,'xticklabel',startTime:2:stopTime);
 xlabel('Time (s)','fontsize',12);
-ylabel('Arm-b ','fontsize',12);
-hl = legend('joint1','joint2','joint3','Location','northwest');
+ylabel('Arm-B ','fontsize',12);
+hl = legend('Joint1','Joint2','Joint3','Location','northwest');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
-savefig(figureHandle11,[dataPath '\JointVel_Error_D.fig']);
+savefig(figureHandle10,[dataPath '\K_Error.fig']);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-figureHandle12 = figure(12)
-semilogx(t,Angle_Err(:,1),'-.m',t,Angle_Err(:,2),'-.r',t,Angle_Err(:,3),'-.b',t,Angle_Err(:,4),'-m',t,Angle_Err(:,5),'-r',t,Angle_Err(:,6),'-b','Linewidth',2);
+figureHandle12 = figure(12);
+subplot(2,1,1);
+semilogx(t,Angular_Err_(:,1:3),'Linewidth',2);
 axis([startTime stopTime -inf inf]);
 % title('Angular Error of Joint A1 and B1');
-hl = legend('A1','A2','A3','B1','B2','B3','Location','northwest');
+hl = legend('A1','A2','A3','Location','northwest');
 set(hl,'Orientation','horizon');
 set(hl,'Box','off');
 xlabel('Time (s)','fontsize',12);
-ylabel('Joint angular error (deg)','fontsize',12);
-savefig(figureHandle12,[dataPath '\JointPos_Error.fig']);
+ylabel('Arm-A (deg/s)','fontsize',12);
+subplot(2,1,2);
+semilogx(t,Angular_Err_(:,4:6),'Linewidth',2);
+axis([startTime stopTime -inf inf]);
+% title('Angular Error of Joint A1 and B1');
+hl = legend('B1','B2','B3','Location','northwest');
+set(hl,'Orientation','horizon');
+set(hl,'Box','off');
+xlabel('Time (s)','fontsize',12);
+ylabel('Arm-B (deg/s)','fontsize',12);
+savefig(figureHandle12,[dataPath '\JointAngular_Error.fig']);
 %%%%%%%%%%%%%%%%%%%  9. 线动量  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %{
 figure(13);
@@ -230,14 +237,15 @@ figureHandle14 = figure(14);
 loglog(t,Lamda,'LineWidth',2);
 xlabel('Time (s)','fontsize',12);
 ylabel('Variable forgetting factor','fontsize',12);
-axis([startTime stopTime -inf inf]);
+axis([startTime stopTime 0.9 1]);
 savefig(figureHandle14,[dataPath '\Lamda.fig']);
 
 
 %xlswrite('data.xls',[BasePos_ BaseVel_ JointPos_D1_ JointPos_D2_ JointPos_D3_ JointVel_D1_ JointVel_D2_ JointVel_D3_ JointPos_U1_ JointPos_U2_ JointPos_U3_ JointVel_U1_ JointVel_U2_ JointVel_U3_]);
 % save('.\data\data.mat',[BasePos_ BaseVel_ JointPos_D1_ JointPos_D2_ JointPos_D3_ JointVel_D1_ JointVel_D2_ JointVel_D3_ JointPos_U1_ JointPos_U2_ JointPos_U3_ JointVel_U1_ JointVel_U2_ JointVel_U3_ MassTarget_ InertiaTarget_ CoMTarget K_Error JointTorque_D1 JointTorque_D2_ JointTorque_D3_ JointTorque_U1_ JointTorque_U2_ JointTorque_U3_]);
+save([dataPath '\Timer.mat'],'t'); 
 save([dataPath '\Torque.mat'],'JointTorque_D1','JointTorque_D2_','JointTorque_D3_','JointTorque_U1_', 'JointTorque_U2_', 'JointTorque_U3_');  
-save([dataPath '\Error.mat'],'K_Err_out'); 
+save([dataPath '\K_Err_out.mat'],'K_Err_out'); 
 save([dataPath '\Base_Target.mat'],'BasePos_', 'BaseVel_', 'MassTarget_', 'InertiaTarget_','CoMTarget');
 save([dataPath '\Identification.mat'],'AngMom_SR_', 'AngMom_Target_', 'AngMom_Sum_');
 save([dataPath '\Lamda.mat'],'Lamda');
