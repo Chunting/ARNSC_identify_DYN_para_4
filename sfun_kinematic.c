@@ -261,8 +261,8 @@ void PD_Controller(double *Theta_Err, double *dTheta_Err,double *TAU,double * Ta
     TAU[4] = Kp_D[1]*Theta_Err[4]+ Kd_D[1]*dTheta_Err[4];
     TAU[5] = Kp_D[2]*Theta_Err[5]+ Kd_D[2]*dTheta_Err[5];
 /**/
-    printf("Tau_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau_t_1[0],Tau_t_1[1],Tau_t_1[2],Tau_t_1[3],Tau_t_1[4],Tau_t_1[5]);
-   // printf("dTheta_Err[0]:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_Err[0],dTheta_Err[1],dTheta_Err[2],dTheta_Err[3],dTheta_Err[4],dTheta_Err[5]);
+    //printf("Tau_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau_t_1[0],Tau_t_1[1],Tau_t_1[2],Tau_t_1[3],Tau_t_1[4],Tau_t_1[5]);
+    // printf("dTheta_Err[0]:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_Err[0],dTheta_Err[1],dTheta_Err[2],dTheta_Err[3],dTheta_Err[4],dTheta_Err[5]);
      
 }
 
@@ -432,12 +432,7 @@ static void mdlStart(SimStruct *S)
  */
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
-    #if defined(SS_STDIO_AVAILABLE)
-	ssPrintf("my message ...");
-#endif
-    ssPrintf("Here is ssPrintf\n");
-     mexPrintf("Here is mexPrintf\n");
-    printf("Here is printf\n");
+    
     // The properties of the bodies, including length, mass and inertia.
     // mass centre of the base
     static real_T b0_U = 0.3*1.414213526;
@@ -682,7 +677,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     real_T Cq[9][1];
     real_T C[9][9];
     time_T t = ssGetT(S);
-    
+    printf("\n========= t = :%4f ===============\n", t);
     /*********************** 定义最大关节角度 **************************************/
     real_T Theta_Umax[3];
     real_T Theta_Dmax[3];
@@ -1005,9 +1000,9 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     
     MATRIX_SetZero(&omega_0, 1,1);
     MATRIX_SetZero(omega_UD_dst, 6,1);
-    //printf("dTheta_U_RL_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_U_RL_t_1[0][0],dTheta_U_RL_t_1[1][0],dTheta_U_RL_t_1[2][0],dTheta_U_RL_t_1[3][0],dTheta_U_RL_t_1[4][0],dTheta_U_RL_t_1[5][0]);
-    //printf("Q_t_1:%4f\n",Q_t_1[0][0]);
-    //printf("W_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",W_t_1[0][0],W_t_1[0][1],W_t_1[0][2],W_t_1[0][3],W_t_1[0][4],W_t_1[0][5]);
+    printf("dTheta_U_RL_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_U_RL_t_1[0],dTheta_U_RL_t_1[1],dTheta_U_RL_t_1[2],dTheta_U_RL_t_1[3],dTheta_U_RL_t_1[4],dTheta_U_RL_t_1[5]);
+    printf("Q_t_1:%4f\n",Q_t_1);
+    printf("W_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",W_t_1[0],W_t_1[1],W_t_1[2],W_t_1[3],W_t_1[4],W_t_1[5]);
     // 关节角速度
     dTheta_UD[0] = dtheta1_U;
     dTheta_UD[1] = dtheta2_U;
@@ -1051,7 +1046,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
         MATRIX_Tran(Temp4,W_t_1,6,1);
         Q_t_1 = 1000.0;  // 为什么是500？
         lambda = 0.99;
-        printf("t:%4f\n",t);
+        
     }
     //// 计算误差项 error, see Eq.30 
     MATRIX_Sub(dTheta_U_RL_t_1,dTheta_UD,Y_t,6,1);
@@ -1068,8 +1063,8 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     MATRIX_Tran(&omega_0,&Tempb,1,1);
     MATRIX_Mul(&Tempb, &Temp5,&Temp6,1,1,1); // （28）中，N（t）分母加号之后部分
     // 计算 lambda_t
-	lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
-	         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
+	//lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
+	//         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
     // lambda = 0.999;
     
     /*
@@ -1253,7 +1248,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 	
 	lamda_out[0] = lambda;
 
-    /*
+    
     printf("omega_UD_dst:%4f,%4f,%4f,%4f,%4f,%4f\n",omega_UD_dst[0],omega_UD_dst[1],omega_UD_dst[2],omega_UD_dst[3],omega_UD_dst[4],omega_UD_dst[5]);
     printf("Angular_Err:%4f,%4f,%4f,%4f,%4f,%4f\n",Angular_Err[0],Angular_Err[1],Angular_Err[2],Angular_Err[3],Angular_Err[4],Angular_Err[5]);
     printf("Id_Result:%4f,%4f,%4f\n",1/Para_Iden_x[0],Para_Iden_x[1],Para_Iden_x[2]);
@@ -1280,7 +1275,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     printf("dTheta_RL_t[5]:%4f\n",rad2deg(dTheta_RL_t[5]));
     printf("\n***********************************************\n");
     printf("--------------------Counter:%4f----------------\n",Counter[0]);
-    */
+    
 }
 
 #define MDL_UPDATE  /* Change to #undef to remove function */
