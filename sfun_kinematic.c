@@ -261,8 +261,8 @@ void PD_Controller(double *Theta_Err, double *dTheta_Err,double *TAU,double * Ta
     TAU[4] = Kp_D[1]*Theta_Err[4]+ Kd_D[1]*dTheta_Err[4];
     TAU[5] = Kp_D[2]*Theta_Err[5]+ Kd_D[2]*dTheta_Err[5];
 /**/
-    //printf("Tau_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau_t_1[0],Tau_t_1[1],Tau_t_1[2],Tau_t_1[3],Tau_t_1[4],Tau_t_1[5]);
-    // printf("dTheta_Err[0]:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_Err[0],dTheta_Err[1],dTheta_Err[2],dTheta_Err[3],dTheta_Err[4],dTheta_Err[5]);
+    //mexPrintf("Tau_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau_t_1[0],Tau_t_1[1],Tau_t_1[2],Tau_t_1[3],Tau_t_1[4],Tau_t_1[5]);
+    // mexPrintf("dTheta_Err[0]:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_Err[0],dTheta_Err[1],dTheta_Err[2],dTheta_Err[3],dTheta_Err[4],dTheta_Err[5]);
      
 }
 
@@ -677,7 +677,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     real_T Cq[9][1];
     real_T C[9][9];
     time_T t = ssGetT(S);
-    printf("\n========= t = :%4f ===============\n", t);
+    
     /*********************** 定义最大关节角度 **************************************/
     real_T Theta_Umax[3];
     real_T Theta_Dmax[3];
@@ -794,33 +794,33 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     re_the_U_t_1[1] =  * Pe_The_t_1_in[1];
     re_the_U_t_1[2] =  * Pe_The_t_1_in[2];
    
-    // printf("r0:%4f,%4f\n",r0_0[0],r0_0[1]);
+    // mexPrintf("r0:%4f,%4f\n",r0_0[0],r0_0[1]);
     r1_U[0] = r0_0[0]+b0_U*cos(theta0_U+fai)+a1_U*cos(theta0_U+theta1_U);
     r1_U[1] = r0_0[1]+b0_U*sin(theta0_U+fai)+a1_U*sin(theta0_U+theta1_U);
-    //printf("r1:%4f,%4f\n",r1_U[0],r1_U[1]);
+    //mexPrintf("r1:%4f,%4f\n",r1_U[0],r1_U[1]);
     r2_U[0] = r0_0[0]+b0_U*cos(theta0_U+fai)+l1_U*cos(theta0_U+theta1_U)+a2_U*cos(theta0_U+theta1_U+theta2_U);
     r2_U[0] = r0_0[1]+b0_U*sin(theta0_U+fai)+l1_U*sin(theta0_U+theta1_U)+a2_U*sin(theta0_U+theta1_U+theta2_U);
-    //printf("r2:%4f,%4f\n",r2_U[0],r2_U[0]);
+    //mexPrintf("r2:%4f,%4f\n",r2_U[0],r2_U[0]);
     r3_U[0] = r0_0[0]+b0_U*cos(theta0_U+fai)+l1_U*cos(theta0_U+theta1_U)+l2_U*cos(theta0_U+theta1_U+theta2_U)+a3_U*cos(theta0_U+theta1_U+theta2_U+theta3_U);
     r3_U[1] = r0_0[1]+b0_U*sin(theta0_U+fai)+l1_U*sin(theta0_U+theta1_U)+l2_U*sin(theta0_U+theta1_U+theta2_U)+a3_U*sin(theta0_U+theta1_U+theta2_U+theta3_U);
-    //printf("r3:%4f,%4f\n",r3_U[0],r3_U[1]);
+    //mexPrintf("r3:%4f,%4f\n",r3_U[0],r3_U[1]);
     re_U[0] = r0_0[0]+b0_U*cos(theta0_U+fai)+l1_U*cos(theta0_U+theta1_U)+l2_U*cos(theta0_U+theta1_U+theta2_U)+l3_U*cos(theta0_U+theta1_U+theta2_U+theta3_U);
     re_U[1] = r0_0[1]+b0_U*sin(theta0_U+fai)+l1_U*sin(theta0_U+theta1_U)+l2_U*sin(theta0_U+theta1_U+theta2_U)+l3_U*sin(theta0_U+theta1_U+theta2_U+theta3_U);
     //ve_U_t_1[0] = v0_0[0]-(b0_U*sin(theta0_U+fai)+l1_U*sin(theta0_U+theta1_U)+l2_U*sin(theta0_U+theta1_U+theta2_U)+l3_U*sin(theta0_U+theta1_U+theta2_U+theta3_U))*dtheta0_U-(l1_U*sin(theta0_U+theta1_U)+l2_U*sin(theta0_U+theta1_U+theta2_U)+l3_U*sin(theta0_U+theta1_U+theta2_U+theta3_U))*dtheta1_U-(l2_U*sin(theta0_U+theta1_U+theta2_U)+l3_U*sin(theta0_U+theta1_U+theta2_U+theta3_U))*dtheta2_U-(l3_U*sin(theta0_U+theta1_U+theta2_U+theta3_U))*dtheta3_U;
     //ve_U_t_1[1] = v0_0[1]+(b0_U*cos(theta0_U+fai)+l1_U*cos(theta0_U+theta1_U)+l2_U*cos(theta0_U+theta1_U+theta2_U)+l3_U*cos(theta0_U+theta1_U+theta2_U+theta3_U))*dtheta0_U+(l1_U*cos(theta0_U+theta1_U)+l2_U*cos(theta0_U+theta1_U+theta2_U)+l3_U*cos(theta0_U+theta1_U+theta2_U+theta3_U))*dtheta1_U+(l2_U*cos(theta0_U+theta1_U+theta2_U)+l3_U*cos(theta0_U+theta1_U+theta2_U+theta3_U))*dtheta2_U+(l3_U*cos(theta0_U+theta1_U+theta2_U+theta3_U))*dtheta3_U;
     r1_D[0] = r0_0[0]+b0_D*cos(theta0_D-fai)+a1_D*cos(theta0_D+theta1_D);
     r1_D[1] = r0_0[1]+b0_D*sin(theta0_D-fai)+a1_D*sin(theta0_D+theta1_D);
-    //printf("r1d:%4f,%4f\n",r1_D[0],r1_D[1]);
+    //mexPrintf("r1d:%4f,%4f\n",r1_D[0],r1_D[1]);
     r2_D[0] = r0_0[0]+b0_D*cos(theta0_D-fai)+l1_D*cos(theta0_D+theta1_D)+a2_D*cos(theta0_D+theta1_D+theta2_D);
     r2_D[1] = r0_0[1]+b0_D*sin(theta0_D-fai)+l1_D*sin(theta0_D+theta1_D)+a2_D*sin(theta0_D+theta1_D+theta2_D);
-    //printf("r2d:%4f,%4f\n",r2_D[0],r2_D[1]);
+    //mexPrintf("r2d:%4f,%4f\n",r2_D[0],r2_D[1]);
     r3_D[0] = r0_0[0]+b0_D*cos(theta0_D-fai)+l1_D*cos(theta0_D+theta1_D)+l2_D*cos(theta0_D+theta1_D+theta2_D)+a3_D*cos(theta0_D+theta1_D+theta2_D+theta3_D);
     r3_D[1] = r0_0[1]+b0_D*sin(theta0_D-fai)+l1_D*sin(theta0_D+theta1_D)+l2_D*sin(theta0_D+theta1_D+theta2_D)+a3_D*sin(theta0_D+theta1_D+theta2_D+theta3_D);
-    //printf("r3d:%4f,%4f\n",r3_D[0],r3_D[1]);
+    //mexPrintf("r3d:%4f,%4f\n",r3_D[0],r3_D[1]);
     r_g[0] = (m_B*r0_0[0]+m1_U*r1_U[0]+m2_U*r2_U[0]+m3_U*r3_U[0]+m1_D*r1_D[0]+m2_D*r2_D[0]+m3_D*r3_D[0])/M;
     r_g[1] = (m_B*r0_0[1]+m1_U*r1_U[1]+m2_U*r2_U[0]+m3_U*r3_U[1]+m1_D*r1_D[1]+m2_D*r2_D[1]+m3_D*r3_D[1])/M;
-    // printf("U:%4f,%4f,%4f\n",theta1_U*180.0/3.1415926,theta2_U*180.0/3.1415926,theta3_U*180.0/3.1415926);
-    // printf("U:%4f,%4f,%4f\n",theta1_D*180.0/3.1415926,theta2_D*180.0/3.1415926,theta3_D*180.0/3.1415926);
+    // mexPrintf("U:%4f,%4f,%4f\n",theta1_U*180.0/3.1415926,theta2_U*180.0/3.1415926,theta3_U*180.0/3.1415926);
+    // mexPrintf("U:%4f,%4f,%4f\n",theta1_D*180.0/3.1415926,theta2_D*180.0/3.1415926,theta3_D*180.0/3.1415926);
     /***************************** 关节Jacobian矩阵 **********************************************/
     /* Je为关节Jacobian矩阵，其中Je_U_12，Je_U_22，Je_D_12，Je_D_22 几项是不是应该去掉含l1_U的项？Je0为底座Jacobian矩阵  */
     Je_U_11 = -1.0*(b0_U*sin(theta0_U+fai) + l1_U*sin(theta0_U+theta1_U) + l2_U*sin(theta0_U+theta1_U+theta2_U) + l3_U*sin(theta0_U+theta1_U+theta2_U+theta3_U));
@@ -848,13 +848,13 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     H_PBthx_D = -1.0*(m1_D*(b0_D*sin(theta0_D-fai)+a1_D*sin(theta0_D+theta1_D)) + m2_D*(b0_D*sin(theta0_D-fai)+l1_D*sin(theta0_D+theta1_D)+a2_D*sin(theta0_D+theta1_D+theta2_D)) + m3_D*(b0_D*sin(theta0_D-fai)+l1_D*sin(theta0_D+theta1_D)+l2_D*sin(theta0_D+theta1_D+theta2_D)+a3_D*sin(theta0_D+theta1_D+theta2_D+theta3_D)));
     H_PBthx = H_PBthx_U + H_PBthx_D;
     
-    //printf("H_PBthx:%4f\n",H_PBthx);
+    //mexPrintf("H_PBthx:%4f\n",H_PBthx);
     // Y方向线动量基座项系数
     H_PBthy_U = (m1_U*(b0_U*cos(theta0_U+fai)+a1_U*cos(theta0_U+theta1_U)) + m2_U*(b0_U*cos(theta0_U+fai)+l1_U*cos(theta0_U+theta1_U)+a2_U*cos(theta0_U+theta1_U+theta2_U)) + m3_U*(b0_U*cos(theta0_U+fai)+l1_U*cos(theta0_U+theta1_U)+l2_U*cos(theta0_U+theta1_U+theta2_U)+a3_U*cos(theta0_U+theta1_U+theta2_U+theta3_U)));
     H_PBthy_D = (m1_D*(b0_D*cos(theta0_D-fai)+a1_D*cos(theta0_D+theta1_D)) + m2_D*(b0_D*cos(theta0_D-fai)+l1_D*cos(theta0_D+theta1_D)+a2_D*cos(theta0_D+theta1_D+theta2_D)) + m3_D*(b0_D*cos(theta0_D-fai)+l1_D*cos(theta0_D+theta1_D)+l2_D*cos(theta0_D+theta1_D+theta2_D)+a3_D*cos(theta0_D+theta1_D+theta2_D+theta3_D)));
     H_PBthy = H_PBthy_U + H_PBthy_D;
     
-    //printf("H_PBthy:%4f\n",H_PBthy);
+    //mexPrintf("H_PBthy:%4f\n",H_PBthy);
     // U臂线动量关节系数
     H_PUM1x = -1.0*(m1_U*(a1_U*sin(theta0_U+theta1_U)) + m2_U*(l1_U*sin(theta0_U+theta1_U)+a2_U*sin(theta0_U+theta1_U+theta2_U)) + m3_U*(l1_U*sin(theta0_U+theta1_U)+l2_U*sin(theta0_U+theta1_U+theta2_U)+a3_U*sin(theta0_U+theta1_U+theta2_U+theta3_U)));
     H_PUM1y =      (m1_U*(a1_U*cos(theta0_U+theta1_U)) + m2_U*(l1_U*cos(theta0_U+theta1_U)+a2_U*cos(theta0_U+theta1_U+theta2_U)) + m3_U*(l1_U*cos(theta0_U+theta1_U)+l2_U*cos(theta0_U+theta1_U+theta2_U)+a3_U*cos(theta0_U+theta1_U+theta2_U+theta3_U)));
@@ -864,12 +864,12 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     
     H_PUM3x = -1.0*(m3_U*(a3_U*sin(theta0_U+theta1_U+theta2_U+theta3_U)));
     H_PUM3y =      (m3_U*(a3_U*cos(theta0_U+theta1_U+theta2_U+theta3_U)));
-    //printf("H_PUM1x:%4f\n",H_PUM1x);
-    //printf("H_PUM1y:%4f\n",H_PUM1y);
-    //printf("H_PUM2x:%4f\n",H_PUM2x);
-    //printf("H_PUM2y:%4f\n",H_PUM2y);
-    //printf("H_PUM3x:%4f\n",H_PUM3x);
-    //printf("H_PUM3y:%4f\n",H_PUM3y);
+    //mexPrintf("H_PUM1x:%4f\n",H_PUM1x);
+    //mexPrintf("H_PUM1y:%4f\n",H_PUM1y);
+    //mexPrintf("H_PUM2x:%4f\n",H_PUM2x);
+    //mexPrintf("H_PUM2y:%4f\n",H_PUM2y);
+    //mexPrintf("H_PUM3x:%4f\n",H_PUM3x);
+    //mexPrintf("H_PUM3y:%4f\n",H_PUM3y);
     
     // D臂线动量关节系数
     H_PDM1x = -1.0*(m1_D*(a1_D*sin(theta0_D+theta1_D)) + m2_D*(l1_D*sin(theta0_D+theta1_D)+a2_D*sin(theta0_D+theta1_D+theta2_D)) + m3_D*(l1_D*sin(theta0_D+theta1_D)+l2_D*sin(theta0_D+theta1_D+theta2_D)+a3_D*sin(theta0_D+theta1_D+theta2_D+theta3_D)));
@@ -881,12 +881,12 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     H_PDM3x = -1.0*(m3_D*(a3_D*sin(theta0_D+theta1_D+theta2_D+theta3_D)));
     H_PDM3y = (m3_D*(a3_D*cos(theta0_D+theta1_D+theta2_D+theta3_D)));
     
-    //printf("H_PDM1x:%4f\n",H_PDM1x);
-    //printf("H_PDM1y:%4f\n",H_PDM1y);
-    //printf("H_PDM2x:%4f\n",H_PDM2x);
-    //printf("H_PDM2y:%4f\n",H_PDM2y);
-    //printf("H_PDM3x:%4f\n",H_PDM3x);
-    //printf("H_PDM3y:%4f\n",H_PDM3y);
+    //mexPrintf("H_PDM1x:%4f\n",H_PDM1x);
+    //mexPrintf("H_PDM1y:%4f\n",H_PDM1y);
+    //mexPrintf("H_PDM2x:%4f\n",H_PDM2x);
+    //mexPrintf("H_PDM2y:%4f\n",H_PDM2y);
+    //mexPrintf("H_PDM3x:%4f\n",H_PDM3x);
+    //mexPrintf("H_PDM3y:%4f\n",H_PDM3y);
     
     // X Y方向上线动量
     Px = M*v0_0[0] + H_PBthx*dtheta0 + H_PUM1x*dtheta1_U + H_PUM2x*dtheta2_U + H_PUM3x*dtheta3_U + H_PDM1x*dtheta1_D + H_PDM2x*dtheta2_D + H_PDM3x*dtheta3_D;
@@ -969,11 +969,13 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     H_th0 = H_LBth0-(H_PBthy*r_g[0]-H_PBthx*r_g[1]);
     
     // 系统总体角动量？？？？？
-    L_am = H_th0*dtheta0 + H_U[0][0]*dtheta1_U + H_U[0][1]*dtheta2_U + H_U[0][2]*dtheta3_U + H_D[0][0]*dtheta1_D + H_D[0][1]*dtheta2_D+H_D[0][2]*dtheta3_D;
+    L_am = H_th0*dtheta0 + H_U[0][0]*dtheta1_U + H_U[0][1]*dtheta2_U + H_U[0][2]*dtheta3_U 
+            + H_D[0][0]*dtheta1_D + H_D[0][1]*dtheta2_D+H_D[0][2]*dtheta3_D;
     //L = H_LB[0][0]*v0_0[0]+H_LB[0][1]*v0_0[1]+ H_LBth0*dtheta0+H_LLM_U[0][0]*dtheta1_U+H_LLM_U[0][1]*dtheta2_U+H_LLM_U[0][2]*dtheta3_U+H_LLM_D[0][0]*dtheta1_D+H_LLM_D[0][1]*dtheta2_D+H_LLM_D[0][2]*dtheta3_D + (Px)*re_U[1]-(Py)*re_U[0];
     // 角动量
-    L = H_LB[0][0]*v0_0[0] + H_LB[0][1]*v0_0[1] + H_LBth0*dtheta0 + H_LLM_U[0][0]*dtheta1_U + H_LLM_U[0][1]*dtheta2_U + H_LLM_U[0][2]*dtheta3_U + H_LLM_D[0][0]*dtheta1_D + H_LLM_D[0][1]*dtheta2_D + H_LLM_D[0][2]*dtheta3_D;
-    //printf("L:%4f\n",H_LB[0][0]*v0_0[0]+H_LB[0][1]*v0_0[1]+ H_LBth0*dtheta0+H_LLM_U[0][0]*dtheta1_U+H_LLM_U[0][1]*dtheta2_U+H_LLM_U[0][2]*dtheta3_U+H_LLM_D[0][0]*dtheta1_D+H_LLM_D[0][1]*dtheta2_D+H_LLM_D[0][2]*dtheta3_D);
+    L = H_LB[0][0]*v0_0[0] + H_LB[0][1]*v0_0[1] + H_LBth0*dtheta0 + H_LLM_U[0][0]*dtheta1_U 
+            + H_LLM_U[0][1]*dtheta2_U + H_LLM_U[0][2]*dtheta3_U + H_LLM_D[0][0]*dtheta1_D + H_LLM_D[0][1]*dtheta2_D + H_LLM_D[0][2]*dtheta3_D;
+    //mexPrintf("L:%4f\n",H_LB[0][0]*v0_0[0]+H_LB[0][1]*v0_0[1]+ H_LBth0*dtheta0+H_LLM_U[0][0]*dtheta1_U+H_LLM_U[0][1]*dtheta2_U+H_LLM_U[0][2]*dtheta3_U+H_LLM_D[0][0]*dtheta1_D+H_LLM_D[0][1]*dtheta2_D+H_LLM_D[0][2]*dtheta3_D);
     
     MATRIX_SetZero(Y_t, 6,1);
     MATRIX_SetZero(Temp1, 6,1);
@@ -1000,9 +1002,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     
     MATRIX_SetZero(&omega_0, 1,1);
     MATRIX_SetZero(omega_UD_dst, 6,1);
-    printf("dTheta_U_RL_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_U_RL_t_1[0],dTheta_U_RL_t_1[1],dTheta_U_RL_t_1[2],dTheta_U_RL_t_1[3],dTheta_U_RL_t_1[4],dTheta_U_RL_t_1[5]);
-    printf("Q_t_1:%4f\n",Q_t_1);
-    printf("W_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",W_t_1[0],W_t_1[1],W_t_1[2],W_t_1[3],W_t_1[4],W_t_1[5]);
+   
     // 关节角速度
     dTheta_UD[0] = dtheta1_U;
     dTheta_UD[1] = dtheta2_U;
@@ -1039,7 +1039,14 @@ static void mdlOutputs(SimStruct *S, int_T tid)
         MATRIX_Mul(H_UD_Pinv,H_UD,HH_UD,6,1,6);
         MATRIX_Sub(E,HH_UD,KK_t,6,6); // 和上式构成（17），反作用零空间
         MATRIX_Mul(KK_t,C_eta,Temp4,6,6,1); //构成（19）第二式
-        MATRIX_Add(Temp1,Temp4,dTheta_U_RL_t_1,6,1); // 相加得到（19）式
+        // MATRIX_Add(Temp1,Temp4,dTheta_U_RL_t_1,6,1); // 相加得到（19）式
+        dTheta_U_RL_t_1[0] = 0;
+        dTheta_U_RL_t_1[1] = 0;
+        dTheta_U_RL_t_1[2] = 0;
+        dTheta_U_RL_t_1[3] = 0;
+        dTheta_U_RL_t_1[4] = 0;
+        dTheta_U_RL_t_1[5] = 0;
+        
         //计算 W_t
         Temp5 = H_th0;
         MATRIX_Mul(H_UD_Pinv, &Temp5,Temp4,6,1,1);  // See Eq. 23-25
@@ -1063,19 +1070,21 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     MATRIX_Tran(&omega_0,&Tempb,1,1);
     MATRIX_Mul(&Tempb, &Temp5,&Temp6,1,1,1); // （28）中，N（t）分母加号之后部分
     // 计算 lambda_t
-	//lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
-	//         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
+	lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
+	         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
     // lambda = 0.999;
     
-    /*
-	if(lambda >= 1.0) {
-		lambda = 0.99;
+    
+	if(lambda >1.0) {
+		lambda = 0.9999;
 	}
-	if(lambda <= 0.9) {
+    
+	if(lambda <= 0) {
 		lambda = 0.9;
 	}
-     **/
-	printf("lambda:%f\n",lambda);
+     
+
+	// mexPrintf("lambda:%f\n",lambda);
     /////////
     MATRIX_Add(&lambda,&Temp6,&Tempb,1,1); // （28）中，N（t）分母
 	    //MATRIX_Inv(&Tempb,&Temp6,1);  // 求倒数该表达方式有问题，不能用
@@ -1150,7 +1159,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     //{
     //    Q_t=500.0;
     // }
-    ssPrintf("Angular_Err[0]:%4f,%4f,%4f,%4f,%4f,%4f\n",Angular_Err[0],Angular_Err[1],Angular_Err[2],Angular_Err[3],Angular_Err[4],Angular_Err[5]);
+   
     PD_Controller(Angle_Err, Angular_Err,Tau_Compulating,Tau_t_1);
     
     Tau1_U[0] = Tau_Compulating[0];
@@ -1160,7 +1169,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     Tau2_D[0] = Tau_Compulating[4];
     Tau3_D[0] = Tau_Compulating[5];
     // }
-    printf("Tau:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau1_U[0],Tau2_U[0],Tau3_U[0],Tau1_D[0],Tau2_D[0],Tau3_D[0]);
+    
     /***************** 参数辨识过程 **************************/
     
     // ve_U[0][0] 末端 X 方向速度
@@ -1182,13 +1191,13 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     Para_Iden_A[6] = 0.0;
     Para_Iden_A[7] = (Px- Px_t_1)*(sin(thetaE_U))-(Py- Py_t_1)*(cos(thetaE_U))-  PcR_t_1*0;
     Para_Iden_A[8] = (ve_U[2]  - dthetaE_t_1*1);//(dtheta0 + dtheta1_U + dtheta2_U + dtheta3_U - dthetaE_t_1)*0.025;
-    mexPrintf("Para_Iden_y :%4f,%4f,%4f\n",Para_Iden_y[0] ,Para_Iden_y[1], Para_Iden_y[2]);
+    // mexPrintf("Para_Iden_y :%4f,%4f,%4f\n",Para_Iden_y[0] ,Para_Iden_y[1], Para_Iden_y[2]);
     // MATRIX_Display(Para_Iden_A, 3,3);
     MATRIX_Inv(Para_Iden_A,Para_Iden_A_Inv,3);
     // MATRIX_Pinv(Para_Iden_A,Para_Iden_A_Inv,3,3);
     //MATRIX_Display(Para_Iden_A_Inv, 3,3);
     MATRIX_Mul(Para_Iden_A_Inv,Para_Iden_y,Para_Iden_x,3,3,1);
-    //printf("Para:%4f,%4f,%4f\n",1/Para_Iden_x[0][0],Para_Iden_x[1][0],Para_Iden_x[2][0]);
+    //mexPrintf("Para:%4f,%4f,%4f\n",1/Para_Iden_x[0][0],Para_Iden_x[1][0],Para_Iden_x[2][0]);
     //参数辨识结束
     Px_out[0] =  Px;
     Py_out[0] =  Py;
@@ -1247,34 +1256,28 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     K_error_out[5] = W_t[5] - W_t_1[5];
 	
 	lamda_out[0] = lambda;
-
-    
-    printf("omega_UD_dst:%4f,%4f,%4f,%4f,%4f,%4f\n",omega_UD_dst[0],omega_UD_dst[1],omega_UD_dst[2],omega_UD_dst[3],omega_UD_dst[4],omega_UD_dst[5]);
-    printf("Angular_Err:%4f,%4f,%4f,%4f,%4f,%4f\n",Angular_Err[0],Angular_Err[1],Angular_Err[2],Angular_Err[3],Angular_Err[4],Angular_Err[5]);
-    printf("Id_Result:%4f,%4f,%4f\n",1/Para_Iden_x[0],Para_Iden_x[1],Para_Iden_x[2]);
-    printf("Tau:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau1_U[0],Tau2_U[0],Tau3_U[0],Tau1_D[0],Tau2_D[0],Tau3_D[0]);
-    printf("N_t:%4f\n",N_t);
-    printf("L:%4f\n",L);
-    printf("P:%4f\n",Px+Py);
-    printf("Q_t_1:%4f\n",Q_t_1);
-    printf("K_t:%4f,%4f,%4f,%4f,%4f,%4f\n",K_t[0],K_t[1],K_t[2],K_t[3],K_t[4],K_t[5]);
-    printf("\n***********************************************\n");
-    printf("C_eta_out[0]:%4f\n",rad2deg(C_eta_out[0]));
-    printf("C_eta_out[1]:%4f\n",rad2deg(C_eta_out[1]));
-    printf("C_eta_out[2]:%4f\n",rad2deg(C_eta_out[2]));
-    printf("C_eta_out[3]:%4f\n",rad2deg(C_eta_out[3]));
-    printf("C_eta_out[4]:%4f\n",rad2deg(C_eta_out[4]));
-    printf("C_eta_out[5]:%4f\n",rad2deg(C_eta_out[5]));
-    printf("\n***********************************************\n");
-    printf("\n***********************************************\n");
-    printf("dTheta_RL_t[0]:%4f\n",rad2deg(dTheta_RL_t[0]));
-    printf("dTheta_RL_t[1]:%4f\n",rad2deg(dTheta_RL_t[1]));
-    printf("dTheta_RL_t[2]:%4f\n",rad2deg(dTheta_RL_t[2]));
-    printf("dTheta_RL_t[3]:%4f\n",rad2deg(dTheta_RL_t[3]));
-    printf("dTheta_RL_t[4]:%4f\n",rad2deg(dTheta_RL_t[4]));
-    printf("dTheta_RL_t[5]:%4f\n",rad2deg(dTheta_RL_t[5]));
-    printf("\n***********************************************\n");
-    printf("--------------------Counter:%4f----------------\n",Counter[0]);
+    if(Counter[0]<100) {
+    mexPrintf("\n***********************************************\n");
+    mexPrintf("\n========= t = :%4f   Counter = %4f ===============\n", t, Counter[0]);
+    mexPrintf("L_m = %4f\n", L_m);
+    mexPrintf("dTheta_U_RL_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_U_RL_t_1[0],dTheta_U_RL_t_1[1],dTheta_U_RL_t_1[2],dTheta_U_RL_t_1[3],dTheta_U_RL_t_1[4],dTheta_U_RL_t_1[5]);
+    mexPrintf("dtheta :%4f,%4f,%4f,%4f,%4f,%4f\n",dtheta1_U, dtheta2_U, dtheta3_U, dtheta1_D, dtheta2_D,dtheta3_D);
+    mexPrintf("Q_t_1:%4f\n",Q_t_1);
+    mexPrintf("W_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",W_t_1[0],W_t_1[1],W_t_1[2],W_t_1[3],W_t_1[4],W_t_1[5]);
+    mexPrintf("Tau:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau1_U[0],Tau2_U[0],Tau3_U[0],Tau1_D[0],Tau2_D[0],Tau3_D[0]);
+    mexPrintf("omega_UD_dst:%4f,%4f,%4f,%4f,%4f,%4f\n",omega_UD_dst[0],omega_UD_dst[1],omega_UD_dst[2],omega_UD_dst[3],omega_UD_dst[4],omega_UD_dst[5]);
+    mexPrintf("Angular_Err:%4f,%4f,%4f,%4f,%4f,%4f\n",Angular_Err[0],Angular_Err[1],Angular_Err[2],Angular_Err[3],Angular_Err[4],Angular_Err[5]);
+    mexPrintf("Id_Result:%4f,%4f,%4f\n",1/Para_Iden_x[0],Para_Iden_x[1],Para_Iden_x[2]);
+    mexPrintf("Tau:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau1_U[0],Tau2_U[0],Tau3_U[0],Tau1_D[0],Tau2_D[0],Tau3_D[0]);
+    mexPrintf("N_t:%4f\n",N_t);
+    mexPrintf("L:%4f\n",L);
+    mexPrintf("P:%4f\n",Px+Py);
+    mexPrintf("Q_t_1:%4f\n",Q_t_1);
+    mexPrintf("K_t:%4f,%4f,%4f,%4f,%4f,%4f\n",K_t[0],K_t[1],K_t[2],K_t[3],K_t[4],K_t[5]);
+    mexPrintf("C_eta_out[0]:%4f, %4f, %4f, %4f, %4f, %4f\n",rad2deg(C_eta_out[0]), rad2deg(C_eta_out[1]), rad2deg(C_eta_out[2]), rad2deg(C_eta_out[3]), rad2deg(C_eta_out[4]), rad2deg(C_eta_out[5]));
+    mexPrintf("dTheta_RL_t: %4f, %4f, %4f, %4f, %4f, %4f\n",rad2deg(dTheta_RL_t[0]), rad2deg(dTheta_RL_t[0]), rad2deg(dTheta_RL_t[1]), rad2deg(dTheta_RL_t[2]), rad2deg(dTheta_RL_t[3]), rad2deg(dTheta_RL_t[4]), rad2deg(dTheta_RL_t[5]));
+    mexPrintf("\n***********************************************\n");
+    }
     
 }
 

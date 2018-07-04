@@ -18,7 +18,7 @@ JointVel_U1_ = rad2deg(JointVel_U1.Data);
 JointVel_U2_ = rad2deg(JointVel_U2.Data);
 JointVel_U3_ = rad2deg(JointVel_U3.Data);
 
-MassTarget_ = MassTarget.Data;
+%MassTarget_ = MassTarget.Data;
 InertiaTarget_ = InertiaTarget.Data;
 CoMTarget_ = CoMTarget.Data;
 
@@ -49,7 +49,7 @@ Angular_Err_ = rad2deg(Angular_Err_out.Data);
 K_Err = rad2deg(K_Err_out.Data);
 Lamda = Lamda_out.Data;
 startTime = 0.0;
-stopTime = 20;
+stopTime = t(end);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +129,7 @@ savefig(figureHandle5,[dataPath '\BaseDisturbance.fig']);
 figureHandle6 = figure(6);
 subplot(3,1,1)
 semilogx(t,MassTarget_,'LineWidth',2);
-axis([startTime stopTime 0 250]);
+axis([startTime stopTime 0 150]);
 ylabel('Mass (kg)','fontsize',12);
 
 subplot(3,1,2)
@@ -139,7 +139,7 @@ axis([startTime stopTime 0 0.5]);
 
 subplot(3,1,3);
 semilogx(t,InertiaTarget_,'LineWidth',2);
-axis([startTime stopTime 0 250]);
+axis([startTime stopTime -inf inf]);
 xlabel('Time (s)','fontsize',12);
 ylabel('Inertia (kg.m^2)','fontsize',12);
 savefig(figureHandle6,[dataPath '\IdentificationResult.fig']);
@@ -168,7 +168,7 @@ savefig(figureHandle7,[dataPath '\JointTorque_D.fig']);
 %%%%%%%%%%%%%%%%%%%%%    6. ∂Ø¡ø ÿ∫„    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figureHandle9 = figure(9);
 l = length(t);
-semilogx(t,AngMom_SR_,'-.m',t,AngMom_Target_,'-r',t,AngMom_Sum_,'-b','LineWidth',2);
+plot(t,AngMom_SR_,'-.m',t,AngMom_Target_,'-r',t,AngMom_Sum_,'-b','LineWidth',2);
 axis([startTime stopTime -inf inf]);
 hl = legend('AngMomSR','AngMomTarget','AngMomSum');
 set(hl,'Orientation','horizon');
@@ -237,7 +237,7 @@ figureHandle14 = figure(14);
 loglog(t,Lamda,'LineWidth',2);
 xlabel('Time (s)','fontsize',12);
 ylabel('Variable forgetting factor','fontsize',12);
-axis([startTime stopTime 0.9 1]);
+axis([startTime stopTime -inf 1]);
 savefig(figureHandle14,[dataPath '\Lamda.fig']);
 
 
