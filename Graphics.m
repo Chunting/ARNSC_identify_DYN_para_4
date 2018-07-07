@@ -18,7 +18,7 @@ JointVel_U1_ = rad2deg(JointVel_U1.Data);
 JointVel_U2_ = rad2deg(JointVel_U2.Data);
 JointVel_U3_ = rad2deg(JointVel_U3.Data);
 
-%MassTarget_ = MassTarget.Data;
+MassTarget_ = MassTarget.Data;
 InertiaTarget_ = InertiaTarget.Data;
 CoMTarget_ = CoMTarget.Data;
 
@@ -246,7 +246,7 @@ savefig(figureHandle14,[dataPath '\Lamda.fig']);
 save([dataPath '\Timer.mat'],'t'); 
 save([dataPath '\Torque.mat'],'JointTorque_D1','JointTorque_D2_','JointTorque_D3_','JointTorque_U1_', 'JointTorque_U2_', 'JointTorque_U3_');  
 save([dataPath '\K_Err_out.mat'],'K_Err_out'); 
-save([dataPath '\Base_Target.mat'],'BasePos_', 'BaseVel_', 'MassTarget_', 'InertiaTarget_','CoMTarget');
+save([dataPath '\Base_Target.mat'],'BasePos_', 'BaseVel_', 'MassTarget_', 'InertiaTarget_','CoMTarget_');
 save([dataPath '\Identification.mat'],'AngMom_SR_', 'AngMom_Target_', 'AngMom_Sum_');
 save([dataPath '\Lamda.mat'],'Lamda');
 save([dataPath '\DualArm.mat'],'JointPos_D1_', 'JointPos_D2_', 'JointPos_D3_', 'JointVel_D1_', 'JointVel_D2_', 'JointVel_D3_', 'JointPos_U1_', 'JointPos_U2_', 'JointPos_U3_', 'JointVel_U1_', 'JointVel_U2_', 'JointVel_U3_');

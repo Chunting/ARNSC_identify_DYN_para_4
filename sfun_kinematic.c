@@ -1070,18 +1070,19 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     MATRIX_Tran(&omega_0,&Tempb,1,1);
     MATRIX_Mul(&Tempb, &Temp5,&Temp6,1,1,1); // （28）中，N（t）分母加号之后部分
     // 计算 lambda_t
-	lambda = 1-1000*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
+	lambda = 1-100*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
 	         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
     // lambda = 0.999;
     
     
-	if(lambda >1.0) {
-		lambda = 0.9999;
+	if(lambda >=1.0) {
+		lambda = 1;
 	}
     
-	if(lambda <= 0) {
-		lambda = 0.9;
+	if(lambda <= 0.3) {
+		lambda = 0.3;
 	}
+     
      
 
 	// mexPrintf("lambda:%f\n",lambda);
