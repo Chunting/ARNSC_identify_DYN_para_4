@@ -1,5 +1,5 @@
 filePath = '.\data\Lamda\';
-filePath = '.\';
+%filePath = '.\';
 K_Err_09_File = [filePath 'K_Err_out_09.mat'];
 K_Err_099_File = [filePath 'K_Err_out_099.mat'];
 K_Err_0999_File = [filePath 'K_Err_out_0999.mat'];
@@ -70,6 +70,16 @@ ylabel('Base angles (deg)','fontsize',12);
 xlabel('Time (s)','fontsize',12);
 hl = legend('\lambda=0.9','\lambda=0.99','\lambda=0.999','VFF','Location','northwest');
 savefig(figureHandleBasePos,[filePath '\BaseDisturbance_Pos.fig']);
+
+maxVel_09 = max(abs(BaseVel_09_data))
+maxVel_099 = max(abs(BaseVel_099_data))
+maxVel_0999 = max(abs(BaseVel_0999_data))
+maxVel = max(abs(BaseVel_data))
+
+maxPos_09 = max(abs(BasePos_09_data))
+maxPos_099 = max(abs(BasePos_099_data))
+maxPos_0999 = max(abs(BasePos_0999_data))
+maxPos = max(abs(BasePos_data))
 %{
 figureHandle10 = figure(10);
 subplot(2,1,1)
