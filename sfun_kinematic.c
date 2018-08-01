@@ -1032,27 +1032,36 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     // if中为抓捕前的信息初始化
     // L_am 为系统总体角动量
     // H_UD 为 (16)-(17) 中的H_wfai矩阵
-    if( (t/0.005) < 1.0){
+    if( (t/0.005) < 3.0){
         L_m = L_am;
         MATRIX_Pinv(H_UD,H_UD_Pinv,1,6);
         MATRIX_Mul(H_UD_Pinv,&L_m,Temp1,6,1,1);  // (19) 式中第一项
         MATRIX_Mul(H_UD_Pinv,H_UD,HH_UD,6,1,6);
         MATRIX_Sub(E,HH_UD,KK_t,6,6); // 和上式构成（17），反作用零空间
         MATRIX_Mul(KK_t,C_eta,Temp4,6,6,1); //构成（19）第二式
-        // MATRIX_Add(Temp1,Temp4,dTheta_U_RL_t_1,6,1); // 相加得到（19）式
-        dTheta_U_RL_t_1[0] = 0;
-        dTheta_U_RL_t_1[1] = 0;
-        dTheta_U_RL_t_1[2] = 0;
-        dTheta_U_RL_t_1[3] = 0;
-        dTheta_U_RL_t_1[4] = 0;
-        dTheta_U_RL_t_1[5] = 0;
+        if( (t/0.005) == 2.0){
+            MATRIX_Add(Temp1,Temp4,dTheta_U_RL_t_1,6,1); // 相加得到（19）式
+        } else{
+            dTheta_U_RL_t_1[0] = 0;
+            dTheta_U_RL_t_1[1] = 0;
+            dTheta_U_RL_t_1[2] = 0;
+            dTheta_U_RL_t_1[3] = 0;
+            dTheta_U_RL_t_1[4] = 0;
+            dTheta_U_RL_t_1[5] = 0;
+        }
         
-        //计算 W_t
+         //计算 W_t
         Temp5 = H_th0;
         MATRIX_Mul(H_UD_Pinv, &Temp5,Temp4,6,1,1);  // See Eq. 23-25
-        MATRIX_Tran(Temp4,W_t_1,6,1);
+        // MATRIX_Tran(Temp4,W_t_1,6,1);
+        W_t_1[0] = 0;
+        W_t_1[1] = 0;
+        W_t_1[2] = 0;
+        W_t_1[3] = 0;
+        W_t_1[4] = 0;
+        W_t_1[5] = 0;
         Q_t_1 = 1000.0;  // 为什么是500？
-        lambda = 0.99;
+        lambda = 0.9;
         
     }
     //// 计算误差项 error, see Eq.30 
@@ -1070,18 +1079,18 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     MATRIX_Tran(&omega_0,&Tempb,1,1);
     MATRIX_Mul(&Tempb, &Temp5,&Temp6,1,1,1); // （28）中，N（t）分母加号之后部分
     // 计算 lambda_t
-	lambda = 1-100*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
-	         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
-    // lambda = 0.999;
+	// lambda = 1-100*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
+	//         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
+    lambda = 0.9;
     
     
-	if(lambda >=1.0) {
-		lambda = 1;
-	}
+	//if(lambda >=1.0) {
+	//	lambda = 1;
+	//}
     
-	if(lambda <= 0.3) {
-		lambda = 0.3;
-	}
+	//if(lambda <= 0.3) {
+	//	lambda = 0.3;
+	//}
      
      
 
