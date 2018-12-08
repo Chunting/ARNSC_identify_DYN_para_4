@@ -241,19 +241,34 @@ double rad2deg(double rad)
 void PD_Controller(double *Theta_Err, double *dTheta_Err,double *TAU,double * Tau_t_1){
     double Kp_U[3],Kp_D[3];
     double Kd_U[3],Kd_D[3];
+    /*
     Kp_U[0] = 300.0;
     Kp_U[1] = 200.0;
     Kp_U[2] = 150.0;
-    Kp_D[0] = 30.0;
+    Kp_D[0] = 300.0;
     Kp_D[1] = 200.0;
     Kp_D[2] = 150.0;
+    
     Kd_U[0] = 20.0;
     Kd_U[1] = 15.0;
     Kd_U[2] = 10.0;
     Kd_D[0] = 20.0;
     Kd_D[1] = 15.0;
     Kd_D[2] = 10.0;
-     
+    */
+    Kp_U[0] = 300.0;
+    Kp_U[1] = 200.0;
+    Kp_U[2] = 300.0;
+    Kp_D[0] = 300.0;
+    Kp_D[1] = 200.0;
+    Kp_D[2] = 150.0;
+    
+    Kd_U[0] = 20.0;
+    Kd_U[1] = 15.0;
+    Kd_U[2] = 10.0;
+    Kd_D[0] = 20.0;
+    Kd_D[1] = 15.0;
+    Kd_D[2] = 10.0;
     TAU[0] = Kp_U[0]*Theta_Err[0]+ Kd_U[0]*dTheta_Err[0];
     TAU[1] = Kp_U[1]*Theta_Err[1]+ Kd_U[1]*dTheta_Err[1];
     TAU[2] = Kp_U[2]*Theta_Err[2]+ Kd_U[2]*dTheta_Err[2];
@@ -457,8 +472,8 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     static real_T l2_D = 0.4;
     static real_T l3_D = 0.4;
     
-    static real_T m_B = 44.0;  // mass of the base
-    static real_T I_B = 44.0;  // Inertia of the base
+    static real_T m_B = 60.0;  // mass of the base
+    static real_T I_B = 60.0;  // Inertia of the base
     
     static real_T m1_U = 2.49;
     static real_T I1_U = 0.208;
@@ -640,6 +655,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     real_T K_t_1_inv[6];
     real_T N_t;
     real_T lambda = 0.99;
+    real_T alpha = 1-lambda;
 	real_T lambda0 = 0.0001;
     real_T Y_t[6];
     real_T Temp1[6];
@@ -729,7 +745,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     real_T * Tau3_D = ssGetOutputPortRealSignal( S, 13 );
     real_T * Counter = ssGetOutputPortRealSignal( S, 14 );
     real_T * Iteration_out = ssGetOutputPortRealSignal( S,15 );
-    real_T * C_eta_out = ssGetOutputPortRealSignal( S,16 );
+    real_T * K_t_out = ssGetOutputPortRealSignal( S,16 );
     real_T * Angular_Err_out = ssGetOutputPortRealSignal( S,17 );
     real_T * K_error_out = ssGetOutputPortRealSignal( S,18 );
 	real_T * lamda_out = ssGetOutputPortRealSignal( S,19 );
@@ -1021,26 +1037,28 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     MATRIX_SetUnit(E,6);
     
     //未考虑关节角度限制
-    C_eta[0] = 0.041;
-    C_eta[1] = 0.041;
-    C_eta[2] = 0.041;
-    C_eta[3] = 0.041;
-    C_eta[4] = 0.041;
-    C_eta[5] = 0.041;
+    C_eta[0] = 0;
+    C_eta[1] = 0;
+    C_eta[2] = 0;
+    C_eta[3] = 0;
+    C_eta[4] = 0;
+    C_eta[5] = 0;
     
     /****** 计算反作用零空间 ****************************/
     // if中为抓捕前的信息初始化
-    // L_am 为系统总体角动量
+    // L_am 为系统总体角动量, the initilized angular momnetum of space robot
     // H_UD 为 (16)-(17) 中的H_wfai矩阵
-    if( (t/0.005) < 3.0){
+    // See P47 Step1
+    if( (t/0.005) < 1.0){
         L_m = L_am;
-        MATRIX_Pinv(H_UD,H_UD_Pinv,1,6);
+        MATRIX_Pinv(H_UD,H_UD_Pinv,1,6); // P47
         MATRIX_Mul(H_UD_Pinv,&L_m,Temp1,6,1,1);  // (19) 式中第一项
         MATRIX_Mul(H_UD_Pinv,H_UD,HH_UD,6,1,6);
         MATRIX_Sub(E,HH_UD,KK_t,6,6); // 和上式构成（17），反作用零空间
         MATRIX_Mul(KK_t,C_eta,Temp4,6,6,1); //构成（19）第二式
-        if( (t/0.005) == 2.0){
-            MATRIX_Add(Temp1,Temp4,dTheta_U_RL_t_1,6,1); // 相加得到（19）式
+   //     if( (t/0.005) == 1.0){
+        MATRIX_Add(Temp1,Temp4,dTheta_U_RL_t_1,6,1); // 相加得到（19）式
+   /*
         } else{
             dTheta_U_RL_t_1[0] = 0;
             dTheta_U_RL_t_1[1] = 0;
@@ -1049,70 +1067,74 @@ static void mdlOutputs(SimStruct *S, int_T tid)
             dTheta_U_RL_t_1[4] = 0;
             dTheta_U_RL_t_1[5] = 0;
         }
-        
+     */   
          //计算 W_t
         Temp5 = H_th0;
         MATRIX_Mul(H_UD_Pinv, &Temp5,Temp4,6,1,1);  // See Eq. 23-25
-        // MATRIX_Tran(Temp4,W_t_1,6,1);
+        // K(t)的初始化数据
+        MATRIX_Tran(Temp4,W_t_1,6,1);
+        /*
         W_t_1[0] = 0;
         W_t_1[1] = 0;
         W_t_1[2] = 0;
         W_t_1[3] = 0;
         W_t_1[4] = 0;
         W_t_1[5] = 0;
-        Q_t_1 = 1000.0;  // 为什么是500？
-        lambda = 0.9;
+         **/
+        Q_t_1 = 500.0;  // 为什么是500？
+        lambda = 0.99;
         
     }
-    //// 计算误差项 error, see Eq.30 
+    //// 计算误差项 error, see P46--Eq.3.9
     MATRIX_Sub(dTheta_U_RL_t_1,dTheta_UD,Y_t,6,1);
     MATRIX_Tran(Y_t,Tempe,6,1);
 	
 	MATRIX_Tran(&omega_0,&Tempb,1,1);
+    // P46--Eq.3.9
     MATRIX_Mul(&Tempb,W_t_1,temp16,1,1,6);
     MATRIX_Sub(Tempe,temp16,Y_Kw0,1,6);  // 误差项 error
     
 
 	/////////////////////////////////////////////////////
     /************** 计算N(t) **************/
-    MATRIX_Mul(&Q_t_1,&omega_0, &Temp5,1,1,1); // （28）中，N（t）分子
+    MATRIX_Mul(&Q_t_1,&omega_0, &Temp5,1,1,1); // （35）中，N（t）分子
     MATRIX_Tran(&omega_0,&Tempb,1,1);
-    MATRIX_Mul(&Tempb, &Temp5,&Temp6,1,1,1); // （28）中，N（t）分母加号之后部分
+    MATRIX_Mul(&omega_0, &Temp5,&Temp6,1,1,1); // （35）中，N（t）分母加号之后部分
     // 计算 lambda_t
-	// lambda = 1-100*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
-	//         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
-    lambda = 0.9;
+	 lambda = 1-100*(Y_Kw0[0]*Y_Kw0[0]+Y_Kw0[1]*Y_Kw0[1]+Y_Kw0[2]*Y_Kw0[2]+
+	         Y_Kw0[3]*Y_Kw0[3]+Y_Kw0[4]*Y_Kw0[4]+Y_Kw0[5]*Y_Kw0[5])/(1+Temp6);
+    // lambda = 0.9;
     
     
-	//if(lambda >=1.0) {
-	//	lambda = 1;
-	//}
+	if(lambda >=1.0) {
+		lambda = 1;
+	}
     
-	//if(lambda <= 0.3) {
-	//	lambda = 0.3;
-	//}
-     
-     
-
+	if(lambda <= 0.3) {
+		lambda = 0.3;
+	}
+    // See adaptive Digital Filters, Chapter 2, Springer,  P67
+    alpha = lambda/(1- lambda); 
 	// mexPrintf("lambda:%f\n",lambda);
     /////////
-    MATRIX_Add(&lambda,&Temp6,&Tempb,1,1); // （28）中，N（t）分母
+    MATRIX_Add(&alpha,&Temp6,&Tempb,1,1); // （28）中，N（t）分母
 	    //MATRIX_Inv(&Tempb,&Temp6,1);  // 求倒数该表达方式有问题，不能用
-	Temp6 = 1/Tempb; // （25）中，N（t）分母
+	Temp6 = 1/Tempb; // （35）中，N（t）分母
 	MATRIX_Mul(&Temp5,&Temp6,&N_t,1,1,1); // 得到N（t）
-	
+	/************* END N(t) *****************************************/
+    
     /*计算Q(t)*/
     MATRIX_Tran(&omega_0,&Tempb,1,1);
     MATRIX_Mul(&N_t,&Tempb,&Temp6,1,1,1);
-    MATRIX_Mul(&Temp6,&Q_t_1, &Temp5,1,1,1);  // 式（28）中Q(t) 减数
+    MATRIX_Mul(&Temp6,&Q_t_1, &Temp5,1,1,1);  // 式（36）中Q(t) 减数
     MATRIX_Sub(&Q_t_1,&Temp5,&Temp6,1,1);
     //MATRIX_Inv(lambda,&Tempb,1);
 	Tempb = 1/lambda;
     MATRIX_Mul(&Temp6,&Tempb,&Q_t,1,1,1);  // 得到Q(t)
     
 
-    MATRIX_Mul(&N_t,Y_Kw0,Tempe,1,1,6);  // Eq.27
-    MATRIX_Add(W_t_1,Tempe,W_t,1,6);
+    MATRIX_Mul(&N_t,Y_Kw0,Tempe,1,1,6);  // P46-Eq.3.9
+    MATRIX_Add(W_t_1,Tempe,W_t,1,6);     // P46-Eq.3.9
     //更新omega_UD_dst
     MATRIX_Tran(W_t,K_t,1,6);
     MATRIX_Mul(K_t,&omega_0,Temp1,6,1,1);
@@ -1147,13 +1169,13 @@ static void mdlOutputs(SimStruct *S, int_T tid)
       ***/
     // 误差为什么要乘以0.025？  转化成角度之差！
     
-    Angle_Err[0] = Angular_Err[0]*(0.025);
-    Angle_Err[1] = Angular_Err[1]*(0.025);
-    Angle_Err[2] = Angular_Err[2]*(0.025);
+    Angle_Err[0] = Angular_Err[0]*(0.005);
+    Angle_Err[1] = Angular_Err[1]*(0.005);
+    Angle_Err[2] = Angular_Err[2]*(0.005);
     
-    Angle_Err[3] = Angular_Err[3]*(0.025);
-    Angle_Err[4] = Angular_Err[4]*(0.025);
-    Angle_Err[5] = Angular_Err[5]*(0.025);
+    Angle_Err[3] = Angular_Err[3]*(0.005);
+    Angle_Err[4] = Angular_Err[4]*(0.005);
+    Angle_Err[5] = Angular_Err[5]*(0.005);
 	
 	/*
 	Angle_Err[0] = Y_t[0][0];
@@ -1163,13 +1185,13 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     Angle_Err[3] = Y_t[3][0];
     Angle_Err[4] = Y_t[4][0];
     Angle_Err[5] = Y_t[5][0];
-	*/
+
 	
-    // if((Q_t>600.0)||(Q_t<100))
-    //{
-    //    Q_t=500.0;
-    // }
-   
+     if((Q_t>900.0)||(Q_t<200))
+    {
+        Q_t=500.0;
+    }
+   	*/
     PD_Controller(Angle_Err, Angular_Err,Tau_Compulating,Tau_t_1);
     
     Tau1_U[0] = Tau_Compulating[0];
@@ -1200,7 +1222,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     Para_Iden_A[5] = 0.0;
     Para_Iden_A[6] = 0.0;
     Para_Iden_A[7] = (Px- Px_t_1)*(sin(thetaE_U))-(Py- Py_t_1)*(cos(thetaE_U))-  PcR_t_1*0;
-    Para_Iden_A[8] = (ve_U[2]  - dthetaE_t_1*1);//(dtheta0 + dtheta1_U + dtheta2_U + dtheta3_U - dthetaE_t_1)*0.025;
+    Para_Iden_A[8] = (ve_U[2]  - dthetaE_t_1*1);//(dtheta0 + dtheta1_U + dtheta2_U + dtheta3_U - dthetaE_t_1)*0.005;
     // mexPrintf("Para_Iden_y :%4f,%4f,%4f\n",Para_Iden_y[0] ,Para_Iden_y[1], Para_Iden_y[2]);
     // MATRIX_Display(Para_Iden_A, 3,3);
     MATRIX_Inv(Para_Iden_A,Para_Iden_A_Inv,3);
@@ -1238,55 +1260,55 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     Pe_The_out[2] = thetaE_U;
     
     Counter[0] = t/0.005;
-    C_eta_out[0] = C_eta[0];
-    C_eta_out[1] = C_eta[1];
-    C_eta_out[2] = C_eta[2];
-    C_eta_out[3] = C_eta[3];
-    C_eta_out[4] = C_eta[4];
-    C_eta_out[5] = C_eta[5];
+    K_t_out[0] = K_t[0];
+    K_t_out[1] = K_t[1];
+    K_t_out[2] = K_t[2];
+    K_t_out[3] = K_t[3];
+    K_t_out[4] = K_t[4];
+    K_t_out[5] = K_t[5];
     Angular_Err_out[0] = Angular_Err[0];
     Angular_Err_out[1] = Angular_Err[1];
     Angular_Err_out[2] = Angular_Err[2];
     Angular_Err_out[3] = Angular_Err[3];
     Angular_Err_out[4] = Angular_Err[4];
     Angular_Err_out[5] = Angular_Err[5];
-    /*
+    // Prediction error
     K_error_out[0] = Y_Kw0[0];
     K_error_out[1] = Y_Kw0[1];
     K_error_out[2] = Y_Kw0[2];
     K_error_out[3] = Y_Kw0[3];
     K_error_out[4] = Y_Kw0[4];
     K_error_out[5] = Y_Kw0[5];
-    */
+    /*
     K_error_out[0] = W_t[0] - W_t_1[0];
     K_error_out[1] = W_t[1] - W_t_1[1];
     K_error_out[2] = W_t[2] - W_t_1[2];
     K_error_out[3] = W_t[3] - W_t_1[3];
     K_error_out[4] = W_t[4] - W_t_1[4];
     K_error_out[5] = W_t[5] - W_t_1[5];
-	
+	*/
 	lamda_out[0] = lambda;
     if(Counter[0]<100) {
-    mexPrintf("\n***********************************************\n");
-    mexPrintf("\n========= t = :%4f   Counter = %4f ===============\n", t, Counter[0]);
-    mexPrintf("L_m = %4f\n", L_m);
-    mexPrintf("dTheta_U_RL_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_U_RL_t_1[0],dTheta_U_RL_t_1[1],dTheta_U_RL_t_1[2],dTheta_U_RL_t_1[3],dTheta_U_RL_t_1[4],dTheta_U_RL_t_1[5]);
-    mexPrintf("dtheta :%4f,%4f,%4f,%4f,%4f,%4f\n",dtheta1_U, dtheta2_U, dtheta3_U, dtheta1_D, dtheta2_D,dtheta3_D);
-    mexPrintf("Q_t_1:%4f\n",Q_t_1);
-    mexPrintf("W_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",W_t_1[0],W_t_1[1],W_t_1[2],W_t_1[3],W_t_1[4],W_t_1[5]);
-    mexPrintf("Tau:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau1_U[0],Tau2_U[0],Tau3_U[0],Tau1_D[0],Tau2_D[0],Tau3_D[0]);
-    mexPrintf("omega_UD_dst:%4f,%4f,%4f,%4f,%4f,%4f\n",omega_UD_dst[0],omega_UD_dst[1],omega_UD_dst[2],omega_UD_dst[3],omega_UD_dst[4],omega_UD_dst[5]);
-    mexPrintf("Angular_Err:%4f,%4f,%4f,%4f,%4f,%4f\n",Angular_Err[0],Angular_Err[1],Angular_Err[2],Angular_Err[3],Angular_Err[4],Angular_Err[5]);
-    mexPrintf("Id_Result:%4f,%4f,%4f\n",1/Para_Iden_x[0],Para_Iden_x[1],Para_Iden_x[2]);
-    mexPrintf("Tau:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau1_U[0],Tau2_U[0],Tau3_U[0],Tau1_D[0],Tau2_D[0],Tau3_D[0]);
-    mexPrintf("N_t:%4f\n",N_t);
-    mexPrintf("L:%4f\n",L);
-    mexPrintf("P:%4f\n",Px+Py);
-    mexPrintf("Q_t_1:%4f\n",Q_t_1);
-    mexPrintf("K_t:%4f,%4f,%4f,%4f,%4f,%4f\n",K_t[0],K_t[1],K_t[2],K_t[3],K_t[4],K_t[5]);
-    mexPrintf("C_eta_out[0]:%4f, %4f, %4f, %4f, %4f, %4f\n",rad2deg(C_eta_out[0]), rad2deg(C_eta_out[1]), rad2deg(C_eta_out[2]), rad2deg(C_eta_out[3]), rad2deg(C_eta_out[4]), rad2deg(C_eta_out[5]));
-    mexPrintf("dTheta_RL_t: %4f, %4f, %4f, %4f, %4f, %4f\n",rad2deg(dTheta_RL_t[0]), rad2deg(dTheta_RL_t[0]), rad2deg(dTheta_RL_t[1]), rad2deg(dTheta_RL_t[2]), rad2deg(dTheta_RL_t[3]), rad2deg(dTheta_RL_t[4]), rad2deg(dTheta_RL_t[5]));
-    mexPrintf("\n***********************************************\n");
+        mexPrintf("\n***********************************************\n");
+        mexPrintf("\n========= t = :%4f   Counter = %4f ===============\n", t, Counter[0]);
+        mexPrintf("L_m = %4f\n", L_m);
+        mexPrintf("dTheta_U_RL_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",dTheta_U_RL_t_1[0],dTheta_U_RL_t_1[1],dTheta_U_RL_t_1[2],dTheta_U_RL_t_1[3],dTheta_U_RL_t_1[4],dTheta_U_RL_t_1[5]);
+        mexPrintf("dtheta :%4f,%4f,%4f,%4f,%4f,%4f\n",dtheta1_U, dtheta2_U, dtheta3_U, dtheta1_D, dtheta2_D,dtheta3_D);
+        mexPrintf("Q_t_1:%4f\n",Q_t_1);
+        mexPrintf("W_t_1:%4f,%4f,%4f,%4f,%4f,%4f\n",W_t_1[0],W_t_1[1],W_t_1[2],W_t_1[3],W_t_1[4],W_t_1[5]);
+        mexPrintf("Tau:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau1_U[0],Tau2_U[0],Tau3_U[0],Tau1_D[0],Tau2_D[0],Tau3_D[0]);
+        mexPrintf("omega_UD_dst:%4f,%4f,%4f,%4f,%4f,%4f\n",omega_UD_dst[0],omega_UD_dst[1],omega_UD_dst[2],omega_UD_dst[3],omega_UD_dst[4],omega_UD_dst[5]);
+        mexPrintf("Angular_Err:%4f,%4f,%4f,%4f,%4f,%4f\n",Angular_Err[0],Angular_Err[1],Angular_Err[2],Angular_Err[3],Angular_Err[4],Angular_Err[5]);
+        mexPrintf("Id_Result:%4f,%4f,%4f\n",1/Para_Iden_x[0],Para_Iden_x[1],Para_Iden_x[2]);
+        mexPrintf("Tau:%4f,%4f,%4f,%4f,%4f,%4f\n",Tau1_U[0],Tau2_U[0],Tau3_U[0],Tau1_D[0],Tau2_D[0],Tau3_D[0]);
+        mexPrintf("N_t:%4f\n",N_t);
+        mexPrintf("L:%4f\n",L);
+        mexPrintf("P:%4f\n",Px+Py);
+        mexPrintf("Q_t_1:%4f\n",Q_t_1);
+        mexPrintf("K_t:%4f,%4f,%4f,%4f,%4f,%4f\n",K_t[0],K_t[1],K_t[2],K_t[3],K_t[4],K_t[5]);
+        mexPrintf("K_t_out[0]:%4f, %4f, %4f, %4f, %4f, %4f\n",rad2deg(K_t_out[0]), rad2deg(K_t_out[1]), rad2deg(K_t_out[2]), rad2deg(K_t_out[3]), rad2deg(K_t_out[4]), rad2deg(K_t_out[5]));
+        mexPrintf("dTheta_RL_t: %4f, %4f, %4f, %4f, %4f, %4f\n",rad2deg(dTheta_RL_t[0]), rad2deg(dTheta_RL_t[0]), rad2deg(dTheta_RL_t[1]), rad2deg(dTheta_RL_t[2]), rad2deg(dTheta_RL_t[3]), rad2deg(dTheta_RL_t[4]), rad2deg(dTheta_RL_t[5]));
+        mexPrintf("\n***********************************************\n");
     }
     
 }
